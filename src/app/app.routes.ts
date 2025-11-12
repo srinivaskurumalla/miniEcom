@@ -6,6 +6,7 @@ import { LoginComponent } from './components/User/login/login.component';
 import { ProductDetailsComponent } from './components/product/product-details/product-details.component';
 import { CartItemsComponent } from './components/Cart/cart-items/cart-items.component';
 import { AddressesComponent } from './components/User/addresses/addresses.component';
+import { ProfileComponent } from './components/User/profile/profile.component';
 
 export const routes: Routes = [
     { path: '', component: ProductsComponent },
@@ -16,5 +17,6 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'product-details/:id', component: ProductDetailsComponent },
     { path: 'cart', component: CartItemsComponent },
-    { path: 'addresses', component: AddressesComponent }
+    { path: 'addresses', component: AddressesComponent },
+    { path: 'profile', component: ProfileComponent }
 ];

@@ -4,16 +4,16 @@ import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { IconModule } from '../../common/icon/icon.module';
 import { UsermenuComponent } from '../../User/usermenu/usermenu.component';
+import { ModalService } from '../../../services/modal.service';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule,IconModule,UsermenuComponent],
+  imports: [CommonModule, RouterModule, IconModule, UsermenuComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
   api = inject(ApiService);
-  cartCount = this.api.cartCount();
   showMenu = signal(false);
 
   isDarkMode = signal<boolean>(false);
@@ -54,8 +54,5 @@ export class HeaderComponent {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
-
-  logout() {
-    this.api.logout();
-  }
+ 
 }

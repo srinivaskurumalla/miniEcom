@@ -4,12 +4,13 @@ import { CartItem } from '../../../models/cart.item.model';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { IconModule } from '../../common/icon/icon.module';
+import { ModalService } from '../../../services/modal.service';
 
 
 @Component({
   selector: 'app-cart-items',
   standalone: true,
-  imports: [CommonModule, RouterLink,IconModule],
+  imports: [CommonModule, RouterLink, IconModule],
   templateUrl: './cart-items.component.html',
   styleUrl: './cart-items.component.css'
 })
@@ -18,6 +19,7 @@ export class CartItemsComponent implements OnInit {
   api = inject(ApiService);
   cartItems = signal<CartItem[]>([]);
   total = signal<number>(0);
+  modal = inject(ModalService)
 
   ngOnInit(): void {
     this.loadCartItems();
@@ -58,18 +60,33 @@ export class CartItemsComponent implements OnInit {
     this.calculateTotal();
   }
 
- removeFromCart(item: CartItem) {
-  if (confirm(`Remove ${item.product.name} from cart?`)) {
+  removeFromCart(item: CartItem) {
+
+    this.modal.open(
+      'Want to remove from cart?',
+      () => {
+        this.removeFromCartConfirmed(item);
+      },
+      () => {
+        console.log('User cancelled removal');
+      },
+      'danger'
+    )
+
+  }
+
+  removeFromCartConfirmed(item: CartItem) {
     this.api.removeCartItem(item.product.id).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.cartItems.update((items) => items.filter((x) => x.id !== item.id));
         this.calculateTotal();
+        this.api.cartCount.set(res.uniqueProducts);
+
       },
-      error: (err:any) => {
+      error: (err: any) => {
         console.error('Failed to remove item', err);
       },
     });
   }
-}
 
 }

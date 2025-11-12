@@ -1,0 +1,74 @@
+<div
+  class="max-w-3xl mx-auto mt-10 p-6 bg-white shadow rounded-xl border border-gray-100"
+>
+  <ng-container *ngIf="!loading(); else loader">
+    <div
+      class="flex flex-col sm:flex-row items-center sm:items-start sm:space-x-6"
+    >
+      <!-- Profile Image -->
+      <div
+        class="w-28 h-28 rounded-full overflow-hidden border-4 border-blue-100 shadow"
+      >
+        <img
+          [src]="
+            profile()?.profileImageUrl || 'https://ui-avatars.com/api/?name='+profile()?.username
+          "
+          alt="Profile"
+          class="w-full h-full object-cover"
+        />
+      </div>
+
+      <!-- Info Section -->
+      <div class="flex-1 text-center sm:text-left mt-4 sm:mt-0">
+        <h2 class="text-2xl font-semibold text-gray-800">
+          {{ profile()?.displayName || profile()?.username }}
+        </h2>
+        <p class="text-gray-600 text-sm">{{ profile()?.username }}</p>
+        <p class="text-gray-700 mt-2">
+          <strong>Email:</strong> {{ profile()?.email }}
+        </p>
+        <p class="text-gray-700">
+          <strong>Phone:</strong> {{ profile()?.phone || "-" }}
+        </p>
+
+        <div class="text-gray-500 text-sm mt-2">
+          <p>Member since: {{ profile()?.createdAt | date : "mediumDate" }}</p>
+          <p *ngIf="profile()?.lastLoginAt">
+            Last login: {{ profile()?.lastLoginAt | date : "medium" }}
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-wrap gap-3 mt-5 justify-center sm:justify-start">
+          <button
+            class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
+            (click)="editProfile()"
+          >
+            Edit Profile
+          </button>
+
+          <button
+            class="bg-gray-100 text-gray-700 px-5 py-2 rounded-lg hover:bg-gray-200 transition"
+            (click)="manageAddresses()"
+          >
+            Manage Addresses
+          </button>
+
+          <button
+            class="bg-red-500 text-white px-5 py-2 rounded-lg hover:bg-red-600 transition"
+            (click)="changePassword()"
+          >
+            Change Password
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Loader -->
+  <ng-template #loader>
+    <div class="flex justify-center items-center py-10 text-gray-500">
+      <span class="animate-pulse">Loading profile...</span>
+    </div>
+  </ng-template>
+</div>

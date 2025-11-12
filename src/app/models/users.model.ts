@@ -9,21 +9,32 @@ export interface Login {
 }
 export interface LoginResult {
     success: boolean;
-    userName:string
+    userName: string
     message: string;
     error: string[];
     token: string
 }
 
 export interface Address {
-  id: number;
-  label?: string;
-  recipientName: string;
-  line1: string;
-  line2?: string;
-  city: string;
-  state: string;
-  postalCode?: string;
-  phone?: string;
-  isDefault: boolean;
+    id: number;
+    label?: string;
+    recipientName: string;
+    line1: string;
+    line2?: string;
+    city: string;
+    state: string;
+    postalCode?: string;
+    phone?: string;
+    isDefault: boolean;
+}
+
+export interface UserProfile {
+    id: number;
+    username: string;
+    email: string;
+    phone?: string;
+    displayName?: string;
+    profileImageUrl?: string;
+    createdAt: string;
+    lastLoginAt?: string;
 }

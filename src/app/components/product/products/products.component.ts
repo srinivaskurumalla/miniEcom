@@ -103,11 +103,13 @@ export class ProductsComponent implements OnInit {
         console.log("add to cart res:", res);
         // this.snack.open('✅ Added to cart!', '', { duration: 1500 })
         this.toast.show("Added to Cart!", "success")
+        this.apiService.cartCount.set(res.uniqueProducts);
+
       },
       error: (err: any) => {
         console.log("add to cart err:", err);
-        this.toast.show('Failed to add to cart.',"error")
-       // this.snack.open('❌ Failed to add to cart.', '', { duration: 1500 })
+        this.toast.show('Failed to add to cart.', "error")
+        // this.snack.open('❌ Failed to add to cart.', '', { duration: 1500 })
       }
     })
   }

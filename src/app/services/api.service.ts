@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Product, ProductDetails } from '../models/products.model';
-import { Address, Login, LoginResult, Register } from '../models/users.model';
+import { Address, Login, LoginResult, Register, UserProfile } from '../models/users.model';
 import { CartItem } from '../models/cart.item.model';
 import { Router } from '@angular/router';
 
@@ -104,7 +104,10 @@ export class ApiService {
       });
     }
   }
+  getUserProfile() {
+    return this.http.get<UserProfile>(`${this.API}/Users/Profile`);
 
+  }
 
   logout() {
     sessionStorage.removeItem('token');

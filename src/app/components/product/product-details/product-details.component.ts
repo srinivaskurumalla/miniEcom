@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { ProductDetails } from '../../../models/products.model';
 import { CommonModule } from '@angular/common';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-product-details',
@@ -14,6 +15,8 @@ import { CommonModule } from '@angular/common';
 export class ProductDetailsComponent implements OnInit {
 
   api = inject(ApiService);
+  toast = inject(ToastService)
+
   productDetails = signal<ProductDetails | null>(null);
   selectedImage = signal<string | null>(null);
 
@@ -50,7 +53,9 @@ export class ProductDetailsComponent implements OnInit {
     this.api.addToCart({ productId, quantity }).subscribe({
       next: (res: any) => {
         console.log("add to cart res:", res);
-        alert("added to cart")
+        this.toast.show("Added to Cart!", "success")
+
+        this.api.cartCount.set(res.uniqueProducts);
       },
       error: (err: any) => {
         console.log("add to cart err:", err);
