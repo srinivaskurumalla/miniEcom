@@ -1,0 +1,82 @@
+<!-- 🔍 Search Bar -->
+<div class="flex justify-center mb-10">
+  <div class="w-full max-w-xl">
+    <app-search-auto-complete></app-search-auto-complete>
+  </div>
+</div>
+
+<!-- 🛍 Product Results -->
+<!-- <div
+  *ngIf="result().length === 0; else productList"
+  class="text-center text-gray-600 text-lg"
+>
+  No products found 😔
+</div> -->
+<div
+  *ngIf="loading(); else productList"
+  class="text-center text-gray-500 py-10"
+>
+  Loading products...
+</div>
+
+<!-- ✅ Product Grid -->
+<ng-template #productList>
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center"
+  >
+    @for(item of result(); track $index) {
+    <div
+      class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition cursor-pointer w-full max-w-xs"
+      (click)="goToProductDetails(item.id)"
+    >
+      <!-- Product Image -->
+      <img
+        [src]="item.images[0]?.imageUrl || 'assets/no-image.png'"
+        alt="{{ item.name }}"
+        class="w-full h-56 object-cover"
+      />
+
+      <!-- Product Details -->
+      <div class="p-4">
+        <h3 class="text-base font-semibold text-gray-800 mb-1">
+          {{ item.name }}
+        </h3>
+        <p class="text-sm text-gray-500 mb-2">
+          {{
+            item.shortDescription?.slice(0,30) || "No description available"
+          }}...
+        </p>
+        <div class="flex justify-between items-center">
+          <span class="text-blue-600 font-semibold text-lg">
+            {{ item.price | currency : "INR" }}
+          </span>
+          <button
+            class="bg-blue-600 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-700 transition"
+            (click)="addToCart(item, $event)"
+          >
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- 📄 Pagination -->
+  <div class="flex justify-center items-center gap-3 mt-10">
+    <button (click)="previousPage()" [disabled]="!canPrevious()">Prev</button>
+
+    @for(page of pageNumbers(); track page) {
+    <button
+      (click)="goToPage(page)"
+      [class.bg-blue-600]="currentPage() === page"
+      [class.text-white]="currentPage() === page"
+      class="px-3 py-1 border rounded-lg hover:bg-blue-100 transition"
+    >
+      {{ page + 1 }}
+    </button>
+    }
+
+    <button (click)="nextPage()" [disabled]="!canNext()">Next</button>
+  </div>
+</ng-template>

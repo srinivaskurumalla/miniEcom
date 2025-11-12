@@ -1,1 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.card {
+  @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700 rounded-lg shadow;
+}
+
+.btn-primary {
+  @apply bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 rounded px-4 py-2 transition;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;            /* removes default browser margin */
+  padding: 0;
+  /* padding-top: 64px; */
+}
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+.page-container {
+  min-height: calc(100vh - 64px) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 0 40px; 
+}
+

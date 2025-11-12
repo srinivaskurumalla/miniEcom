@@ -1,0 +1,84 @@
+.card {
+    border: 1px solid black;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 250px;
+    padding: 37px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    border-radius: 8px;
+
+}
+
+.card:hover {
+    background-color: aliceblue;
+    cursor: pointer;
+    transition: transform 0.2s ease-in;
+
+}
+
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 35px;
+    margin: 20px;
+    padding: 20px;
+}
+
+
+.pagination {
+    position: fixed;
+    bottom: 20px;
+    /* keep a small gap from the bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    /* center horizontally */
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background-color: rgba(255, 255, 255, 255);
+    /* semi-transparent background */
+    backdrop-filter: blur(6px);
+    /* optional glass effect */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+
+.pagination button {
+    padding: 6px 12px;
+    border: 1px solid #007bff;
+    background: #fff;
+    color: #007bff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: 0.3s;
+}
+
+.pagination button.active {
+    background: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0, 5;
+}
+
+.searchBar {
+    align-items: center;
+    text-align: center;
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+
+}

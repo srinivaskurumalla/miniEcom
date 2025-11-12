@@ -1,0 +1,62 @@
+<header
+  class="bg-white shadow-md fixed w-full z-50 px-6 py-3 flex justify-between items-center"
+>
+  <button (click)="goHome()">Logo</button>
+  <h1 class="text-lg font-semibold text-gray-800 cursor-pointer">MiniEcom</h1>
+
+  <div class="flex items-center space-x-6">
+    <!-- <button
+      (click)="toggleDarkMode()"
+      class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 transition"
+    >
+      {{ isDarkMode() ? "🌙 Dark" : "☀️ Light" }}
+    </button> -->
+
+    <!-- Reactive Cart Count -->
+    <button class="relative" (click)="goToCart()">
+      <lucide-icon name="shopping-cart" class="w-6 h-6 text-gray-700">
+      </lucide-icon>
+      @if(api.cartCount() > 0) {
+      <span
+        class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5"
+      >
+        {{ api.cartCount() }}
+      </span>
+      }
+    </button>
+
+    <!-- Reactive User -->
+    @if(api.userName()) {
+    <span class="text-gray-700 font-medium">{{ api.userName() }}</span>
+    <app-usermenu></app-usermenu>
+
+    } @else {
+    <a
+      routerLink="/login"
+      class="text-blue-600 hover:underline cursor-pointer text-sm"
+      >Login</a
+    >
+    }
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div
+  *ngIf="showMenu()"
+  class="absolute top-16 left-0 w-full bg-white border-t shadow-md sm:hidden"
+>
+  <ul class="flex flex-col py-2">
+    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="goHome()">
+      Home
+    </li>
+    <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="goToCart()">
+      Cart
+    </li>
+    <li
+      class="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+      (click)="goToProfile()"
+    >
+      Profile
+    </li>
+  </ul>
+</div>
