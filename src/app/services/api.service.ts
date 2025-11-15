@@ -108,9 +108,13 @@ export class ApiService {
     return this.http.get<UserProfile>(`${this.API}/Users/Profile`);
 
   }
+  checkout(payload: any) {
+    return this.http.post(`${this.API}/orders/checkout`, payload);
+  }
 
   logout() {
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userName');
     this.isLoggedIn.set(false);
     this.userName.set(null);
     this.cartCount.set(0);

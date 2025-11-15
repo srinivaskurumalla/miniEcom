@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { CartItem } from '../../../models/cart.item.model';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IconModule } from '../../common/icon/icon.module';
 import { ModalService } from '../../../services/modal.service';
 
@@ -20,7 +20,7 @@ export class CartItemsComponent implements OnInit {
   cartItems = signal<CartItem[]>([]);
   total = signal<number>(0);
   modal = inject(ModalService)
-
+  router = inject(Router)
   ngOnInit(): void {
     this.loadCartItems();
   }
@@ -89,4 +89,7 @@ export class CartItemsComponent implements OnInit {
     });
   }
 
+  checkout() {
+    this.router.navigate(['/checkout'])
+  }
 }

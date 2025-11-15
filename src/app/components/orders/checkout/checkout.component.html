@@ -1,0 +1,72 @@
+<div class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+  <h2 class="text-2xl font-semibold mb-4 text-gray-800">🛍 Checkout</h2>
+
+  <!-- Addresses -->
+  <div>
+    <h3 class="text-lg font-medium text-gray-700 mb-2">Select Address</h3>
+    <div class="space-y-3">
+      <div
+        *ngFor="let addr of addresses()"
+        (click)="selectedAddressId.set(addr.id)"
+        class="p-4 border rounded-lg cursor-pointer transition-all"
+        [ngClass]="{
+          'border-blue-500 bg-blue-50': selectedAddressId() === addr.id,
+          'hover:border-gray-400': selectedAddressId() !== addr.id
+        }"
+      >
+        <p class="font-semibold text-gray-800">{{ addr.recipientName }}</p>
+        <p class="text-sm text-gray-600">
+          {{ addr.line1 }}, {{ addr.city }}, {{ addr.state }} -
+          {{ addr.postalCode }}
+        </p>
+        <p class="text-sm text-gray-500">📞 {{ addr.phone }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment -->
+  <div class="flex gap-6">
+    <label
+      *ngFor="let method of PaymentMethods"
+      class="flex items-center gap-2 cursor-pointer"
+    >
+      <input
+        type="radio"
+        [value]="method"
+        [checked]="paymentMethod() === method"
+        (change)="paymentMethod.set(method)"
+      />
+      <span>{{ method }}</span>
+    </label>
+  </div>
+
+  <!-- Notes -->
+  <div class="mt-6">
+    <label class="text-gray-700 font-medium">Additional Notes</label>
+    <textarea
+      (change)="notes()"
+      rows="3"
+      class="w-full mt-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      placeholder="Eg: Please deliver between 10am-6pm"
+    ></textarea>
+  </div>
+
+  <!-- Submit -->
+  <div class="mt-8 text-right">
+    <button
+      class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+      [disabled]="loading()"
+      (click)="placeOrder()"
+    >
+      {{ loading() ? "Placing Order..." : "Place Order" }}
+    </button>
+  </div>
+
+  <!-- Success Message -->
+  <div
+    *ngIf="successMessage()"
+    class="mt-6 p-4 bg-green-100 border border-green-300 rounded-lg text-green-700"
+  >
+    {{ successMessage() }}
+  </div>
+</div>
