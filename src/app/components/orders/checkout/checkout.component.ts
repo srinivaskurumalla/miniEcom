@@ -20,11 +20,13 @@ export class CheckoutComponent implements OnInit {
 
 
   addresses = signal<Address[]>([]);
-  selectedAddressId = signal<number | null>(null);
+  currPrimaryAddress = signal<Address | null>(null);
   paymentMethod = signal<string>('COD');
   notes = signal<string>('');
   loading = signal<boolean>(false);
   successMessage = signal<string | null>(null);
+
+  changeAddress = signal<boolean>(false);
 
   readonly PaymentMethods = ['COD', 'UPI', 'CARD'];
 
@@ -37,7 +39,7 @@ export class CheckoutComponent implements OnInit {
       next: (res: Address[]) => {
         this.addresses.set(res);
         const defaultAddr = res.find(a => a.isDefault);
-        if (defaultAddr) this.selectedAddressId.set(defaultAddr.id);
+        this.currPrimaryAddress.set(defaultAddr!);
       },
       error: (err) => console.error('Failed to load addresses', err)
     });
@@ -45,14 +47,14 @@ export class CheckoutComponent implements OnInit {
 
 
   placeOrder() {
-    if (!this.selectedAddressId()) {
+    if (!this.currPrimaryAddress()) {
       alert('Please select a shipping address.');
       return;
     }
 
     const payload: CheckoutRequest = {
-      shippingAddressId: this.selectedAddressId()!,
-      billingAddressId: this.selectedAddressId()!, // same for now
+      shippingAddressId: this.currPrimaryAddress()?.id!,
+      billingAddressId: this.currPrimaryAddress()?.id!, // same for now
       paymentMethod: this.paymentMethod(),
       notes: this.notes()
     };
@@ -71,4 +73,11 @@ export class CheckoutComponent implements OnInit {
       }
     });
   }
+
+
+  selectAddress(addr: Address) {
+    this.currPrimaryAddress.set(addr);
+    this.changeAddress.set(false); //Hide the list again
+  }
+
 }
