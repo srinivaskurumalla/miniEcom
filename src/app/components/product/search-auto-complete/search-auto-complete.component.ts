@@ -71,7 +71,7 @@ export class SearchAutoCompleteComponent implements OnInit {
           console.log(res);
           this.loading = false;
           const filtered = res
-            .filter((p: Product) => p.name.toLowerCase().includes(query.toLowerCase()))
+           // .filter((p: Product) => p.name.toLowerCase().includes(query.toLowerCase()))
             .map((p: Product) =>
             ({
               id: p.id,
@@ -104,6 +104,12 @@ export class SearchAutoCompleteComponent implements OnInit {
     this.result.set([]);
     this.searchQuery = item.name;
     console.log("selected item", item);
-    
+
+    this.apiService.searchProducts(item.id.toString(), 1).subscribe({
+      next: () => {
+
+      }
+    })
+
   }
 }

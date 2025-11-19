@@ -41,6 +41,7 @@ export class AddProductComponent implements OnInit {
     taxPercent: [0],
     stockQuantity: [0, [Validators.required, Validators.min(0)]],
     isActive: [true],
+    tags: [''], // NEW
     images: [null as FileList | null] // will hold FileList
   })
 
@@ -65,11 +66,29 @@ export class AddProductComponent implements OnInit {
     }
     const formData = new FormData();
     Object.entries(this.productForm.value).forEach(([key, value]) => {
-      if (key == 'images' && value) {
+
+      //Handle images
+      if (key === 'images' && value) {
         Array.from(value as FileList).forEach((file) => {
           formData.append('images', file);
         })
-      } else if (value != null && value != undefined) {
+      }
+
+      // Handle Tags
+      else if (key === 'tags') {
+        const tagValue = value ? String(value) : '';
+        const tagList = tagValue
+          .split(',')
+          .map(t => t.trim().toLowerCase())
+          .filter(t => t.length > 0);
+
+        tagList.forEach(tag => {
+          formData.append('tags', tag);
+        });
+      }
+
+      //Handle normal fields
+      else if (value !== null && value !== undefined) {
         formData.append(key, value as any)
       }
     });
