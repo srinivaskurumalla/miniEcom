@@ -5,6 +5,7 @@ import { Product, ProductDetails } from '../models/products.model';
 import { Address, Login, LoginResult, Register, UserProfile } from '../models/users.model';
 import { CartItem } from '../models/cart.item.model';
 import { Router } from '@angular/router';
+import { Order } from '../models/order.model';
 
 @Injectable({
   providedIn: 'root'
@@ -112,9 +113,13 @@ export class ApiService {
     return this.http.post(`${this.API}/orders/checkout`, payload);
   }
 
+  getOrders() {
+  return this.http.get<Order[]>(`${this.API}/orders/my-orders`);
+}
+
   logout() {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('userName');
+    localStorage.clear();
+    sessionStorage.clear();
     this.isLoggedIn.set(false);
     this.userName.set(null);
     this.cartCount.set(0);

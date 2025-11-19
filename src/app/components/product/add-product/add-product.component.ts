@@ -10,7 +10,7 @@ import { Categories } from '../../../models/products.model';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-  
+
   ],
   templateUrl: './add-product.component.html',
   styleUrl: './add-product.component.css'
@@ -23,7 +23,11 @@ export class AddProductComponent implements OnInit {
   categories: Categories[] = [];
 
   ngOnInit(): void {
+    //Load Categories from API
     this.fetchCategories();
+
+    // Auto-generate SKU when relevant fields change
+    this.setupSkuGenerator();
   }
 
   productForm = this.fb.group({
@@ -87,6 +91,22 @@ export class AddProductComponent implements OnInit {
     this.api.getCategories().subscribe({
       next: (res) => (this.categories = res),
       error: (err) => console.error("Error fetching categories", err),
+    });
+  }
+
+  setupSkuGenerator() {
+    this.productForm.valueChanges.subscribe(values => {
+      const { name, categoryId, price } = values;
+
+      if (name && categoryId && price) {
+        const category = this.categories.find(c => c.id == +categoryId);
+        const catCode = category ? category.name.slice(0, 3).toUpperCase() : 'GEN';
+        const nameCode = name.slice(0, 3).toUpperCase();
+        const randomCode = Math.floor(100 + Math.random() * 900); // 3-digit unique suffix
+
+        const generatedSku = `${catCode}-${nameCode}-${randomCode}`;
+        this.productForm.get('sku')?.setValue(generatedSku, { emitEvent: false });
+      }
     });
   }
 }

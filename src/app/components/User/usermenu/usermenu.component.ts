@@ -41,7 +41,7 @@ export class UsermenuComponent {
   }
   viewOrders() {
     console.log('Navigating to orders...');
-    this.router.navigate(['/orders']);
+    this.router.navigate(['/my-orders']);
     this.isMenuOpen = false;
   }
 

@@ -7,6 +7,20 @@
       *ngFor="let item of cartItems()"
       class="relative flex flex-col sm:flex-row items-center bg-white shadow rounded-xl p-4 mb-4 hover:shadow-md transition"
     >
+      <span
+        *ngIf="item.product.stockQuantity <= 10"
+        [ngClass]="{
+          'bg-red-100': item.product.stockQuantity > 0,
+          'bg-gray-200': item.product.stockQuantity === 0
+        }"
+        class="absolute top-0 right-0 text-red-500 text-xs px-2 py-1 rounded-e"
+      >
+        {{
+          item.product.stockQuantity === 0
+            ? "Out"
+            : "Low: " + item.product.stockQuantity
+        }}
+      </span>
       <!-- Product Image -->
       <div class="w-32 h-32 flex-shrink-0">
         <img
@@ -23,11 +37,11 @@
           <h3 class="text-lg font-semibold">{{ item.product.name }}</h3>
           <button
             (click)="removeFromCart(item)"
-            class="text-gray-400 hover:text-red-500 transition"
+            class="absolute bottom-2 right-2 text-red-400 hover:text-red-500 transition"
             matTooltip="Remove item"
           >
             <!-- <mat-icon fontIcon="delete"></mat-icon> -->
-             <lucide-icon name="trash-2" class="w-6 h-6"></lucide-icon>
+            <lucide-icon name="trash-2" class="w-4 h-4"></lucide-icon>
           </button>
         </div>
         <p class="text-sm text-gray-500 mb-1">SKU: {{ item.product.sku }}</p>
@@ -70,7 +84,8 @@
 
     <!-- Checkout Button -->
     <div class="text-right mt-4">
-      <button (click)="checkout()"
+      <button
+        (click)="checkout()"
         class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
       >
         Proceed to Checkout

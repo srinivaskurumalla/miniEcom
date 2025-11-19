@@ -95,6 +95,10 @@ export class ProductsComponent implements OnInit {
 
   addToCart(item: Product, event: Event) {
     event.stopPropagation();
+    if (!this.apiService.isLoggedIn()) {
+      this.toast.show('Please login to add to cart', "warning");
+      return;
+    }
     // Add to cart logic
     const productId = item.id;
     const quantity = 1;

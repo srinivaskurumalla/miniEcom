@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Address } from '../../../models/users.model';
 import { CheckoutRequest } from '../../../models/order.model';
+import { CartItem } from '../../../models/cart.item.model';
+import { CartService } from '../../../services/cart.service';
 
 @Component({
   selector: 'app-checkout',
@@ -14,7 +16,8 @@ import { CheckoutRequest } from '../../../models/order.model';
   styleUrl: './checkout.component.css'
 })
 export class CheckoutComponent implements OnInit {
-
+  cartService = inject(CartService);
+  cartItems = this.cartService.cartItems;
   api = inject(ApiService);
   router = inject(Router);
 
@@ -27,7 +30,6 @@ export class CheckoutComponent implements OnInit {
   successMessage = signal<string | null>(null);
 
   changeAddress = signal<boolean>(false);
-
   readonly PaymentMethods = ['COD', 'UPI', 'CARD'];
 
   ngOnInit(): void {
@@ -79,5 +81,15 @@ export class CheckoutComponent implements OnInit {
     this.currPrimaryAddress.set(addr);
     this.changeAddress.set(false); //Hide the list again
   }
+
+  subTotal = computed(() => this.cartService.subTotal());
+  totalItems = computed(() => this.cartService.totalItems());
+
+  taxPercent = 5;
+  taxAmount = computed(() => (this.subTotal() * this.taxPercent) / 100);
+  shippingCharge = computed(() => (this.subTotal() > 500 ? 0 : 49));
+  totalAmount = computed(() =>
+    this.subTotal() + this.taxAmount() + this.shippingCharge()
+  );
 
 }

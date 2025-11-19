@@ -1,20 +1,16 @@
-<!-- <h1 class="text-3xl font-bold text-blue-600 text-center mt-10">
-  Tailwind is working 🎉
-</h1> -->
-
 <div class="max-w-6xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-  <!-- Left Section: Images -->
+
+  <!-- LEFT: IMAGES -->
   <div>
-    <!-- Main Image -->
-    <div class="border rounded-2xl overflow-hidden shadow-md main-image">
+    <div class="border rounded-2xl overflow-hidden shadow-md 
+                flex items-center justify-center
+                w-full h-[450px] md:w-[450px] md:h-[450px] bg-white">
       <img
         [src]="selectedImage() || productDetails()!.images[0]?.imageUrl"
-        alt="Product Image"
-        class="w-full h-96 object-contain transition-transform duration-300 hover:scale-105"
+        class="max-w-full max-h-full object-contain"
       />
     </div>
 
-    <!-- Thumbnails -->
     <div class="flex gap-3 mt-4 justify-center">
       <img
         *ngFor="let img of productDetails()?.images"
@@ -26,45 +22,46 @@
     </div>
   </div>
 
-  <!-- Right Section: Details -->
-  <div>
-    <h2 class="text-3xl font-semibold text-gray-800 mb-2">
+  <!-- RIGHT: DETAILS -->
+  <div class="flex flex-col justify-center items-center md:justify-center gap-4">
+    <h2 class="text-3xl font-semibold text-gray-800">
       {{ productDetails()?.name }}
     </h2>
-    <p class="text-gray-500 mb-3 text-sm">
-      SKU: {{ productDetails()?.sku }}
-    </p>
-    <p class="text-gray-700 mb-5">
-      {{ productDetails()?.shortDescription }}
-    </p>
 
-    <div class="mb-5">
+    <p class="text-gray-500 text-sm">SKU: {{ productDetails()?.sku }}</p>
+
+    <div>
       <span class="text-2xl font-bold text-green-600">
-        {{ productDetails()?.price | currency : 'INR'}}
+        {{ productDetails()?.price | currency : "INR" }}
       </span>
-      <span
-        *ngIf="productDetails()?.mrp"
-        class="text-gray-400 line-through ml-3"
-      >
-        ${{ productDetails()?.mrp | currency : 'INR'}}
+      <span *ngIf="productDetails()?.mrp" class="text-gray-400 line-through ml-3">
+        {{ productDetails()?.mrp | currency : "INR" }}
       </span>
     </div>
 
-    <p class="text-sm text-gray-600 mb-5">
+    <p class="text-gray-700">
+      {{ productDetails()?.shortDescription }}
+    </p>
+
+    <p class="text-gray-600 text-sm">
       {{ productDetails()?.longDescription }}
     </p>
 
-    <div class="flex gap-4 place-content-center">
-      <button (click)="addToCart(productDetails()?.id, 1)"
-        class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition cursor-pointer "
-      >
-        Add to Cart
-      </button>
+    <div class="flex gap-4 mt-4">
       <button
-        class="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700 transition"
+        [disabled]="productDetails()?.stockQuantity === 0"
+        (click)="addToCart(productDetails()?.id, 1)"
+        class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ productDetails()?.stockQuantity === 0 ? "Out of Stock" : "Add to Cart" }}
+      </button>
+
+      <button *ngIf="productDetails()?.stockQuantity! > 0"
+        class="bg-green-600 text-white px-6 py-2 rounded-xl hover:bg-green-700"
       >
         Buy Now
       </button>
     </div>
   </div>
+
 </div>

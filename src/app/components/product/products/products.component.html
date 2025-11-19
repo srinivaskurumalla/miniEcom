@@ -26,9 +26,24 @@
   >
     @for(item of result(); track $index) {
     <div
-      class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition cursor-pointer w-full max-w-xs"
+      class="relative bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition cursor-pointer w-full max-w-xs"
       (click)="goToProductDetails(item.id)"
     >
+      <!-- 🏷️ STOCK BADGE -->
+      <span
+        *ngIf="item.stockQuantity <= 10"
+        [ngClass]="{
+          'bg-red-200': item.stockQuantity > 0,
+          'bg-gray-200': item.stockQuantity === 0
+        }"
+        class="absolute top-0 right-0 text-red-500 text-xs font-semibold px-2 py-1 rounded-e"
+      >
+        {{
+          item.stockQuantity === 0
+            ? "Out of Stock"
+            : "Only " + item.stockQuantity + " left!"
+        }}
+      </span>
       <!-- Product Image -->
       <img
         [src]="item.images[0]?.imageUrl || 'assets/no-image.png'"
@@ -43,7 +58,7 @@
         </h3>
         <p class="text-sm text-gray-500 mb-2">
           {{
-            item.shortDescription?.slice(0,30) || "No description available"
+            item.shortDescription?.slice(0, 30) || "No description available"
           }}...
         </p>
         <div class="flex justify-between items-center">
@@ -51,10 +66,11 @@
             {{ item.price | currency : "INR" }}
           </span>
           <button
-            class="bg-blue-600 text-white text-sm px-3 py-1 rounded-lg hover:bg-blue-700 transition"
+            [disabled]="item.stockQuantity === 0"
+            class="bg-blue-600 text-white text-sm px-3 py-1 rounded-lg transition hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             (click)="addToCart(item, $event)"
           >
-            Add to Cart
+            {{ item.stockQuantity === 0 ? "Out of Stock" : "Add to Cart" }}
           </button>
         </div>
       </div>

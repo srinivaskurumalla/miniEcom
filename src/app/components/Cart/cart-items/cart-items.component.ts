@@ -1,10 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ApiService } from '../../../services/api.service';
 import { CartItem } from '../../../models/cart.item.model';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { IconModule } from '../../common/icon/icon.module';
 import { ModalService } from '../../../services/modal.service';
+import { CartService } from '../../../services/cart.service';
+import { ToastService } from '../../../services/toast.service';
 
 
 @Component({
@@ -16,49 +18,38 @@ import { ModalService } from '../../../services/modal.service';
 })
 export class CartItemsComponent implements OnInit {
 
-  api = inject(ApiService);
-  cartItems = signal<CartItem[]>([]);
-  total = signal<number>(0);
+  //api = inject(ApiService);
+  cartService = inject(CartService);
+  cartItems = this.cartService.cartItems
   modal = inject(ModalService)
   router = inject(Router)
+  toast = inject(ToastService);
+
+  total = computed(() =>
+    this.cartItems().reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+  );
+
   ngOnInit(): void {
-    this.loadCartItems();
+    this.cartService.loadCart();
   }
 
-
-  loadCartItems() {
-    this.api.getCartItems().subscribe({
-      next: (res: CartItem[]) => {
-        console.log("cart items:", res);
-        this.cartItems.set(res);
-        this.calculateTotal();
-
-      },
-      error: (err: any) => {
-        console.log("cart load error", err);
-
-      }
-    })
-  }
-
-
-  calculateTotal() {
-    const total = this.cartItems().reduce(
-      (sum, item) => sum + item.product.price * item.quantity,
-      0
-    );
-    this.total.set(total);
-  }
 
   increase(item: CartItem) {
-    item.quantity++;
-    this.calculateTotal();
+    const newQty = item.quantity + 1;
+    if (newQty <= item.product.stockQuantity) {
+      this.cartService.updateQuantity(item.product.id, newQty);
+    } else {
+      this.toast.show('Cannot exceed available stock', 'warning');
+    }
   }
 
   decrease(item: CartItem) {
-    if (item.quantity > 1) item.quantity--;
-    this.calculateTotal();
+    if (item.quantity > 1) {
+      const newQty = item.quantity - 1;
+      this.cartService.updateQuantity(item.product.id, newQty);
+    }
   }
+
 
   removeFromCart(item: CartItem) {
 
@@ -76,17 +67,7 @@ export class CartItemsComponent implements OnInit {
   }
 
   removeFromCartConfirmed(item: CartItem) {
-    this.api.removeCartItem(item.product.id).subscribe({
-      next: (res: any) => {
-        this.cartItems.update((items) => items.filter((x) => x.id !== item.id));
-        this.calculateTotal();
-        this.api.cartCount.set(res.uniqueProducts);
-
-      },
-      error: (err: any) => {
-        console.error('Failed to remove item', err);
-      },
-    });
+    this.cartService.removeFromCart(item.productId);
   }
 
   checkout() {
