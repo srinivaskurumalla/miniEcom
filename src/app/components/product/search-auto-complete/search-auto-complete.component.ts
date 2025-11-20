@@ -1,115 +1,50 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Product, ProductSearchResult } from '../../../models/products.model';
 import { ApiService } from '../../../services/api.service';
-
+import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-search-auto-complete',
   standalone: true,
-  imports: [CommonModule, FormsModule, FormsModule],
-  templateUrl: './search-auto-complete.component.html',
-  styleUrl: './search-auto-complete.component.css'
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './search-auto-complete.component.html'
 })
-export class SearchAutoCompleteComponent implements OnInit {
-  private searchSub?: Subscription;
-  showResult: boolean = false;
-  searchQuery: string = '';
-  result = signal<ProductSearchResult[]>([]);
-  product!: ProductSearchResult
-  private apiService = inject(ApiService);
+export class SearchAutoCompleteComponent {
+  api = inject(ApiService);
+  router = inject(Router);
 
-  searchTimeout: any;
+  searchControl = new FormControl('');
+  results = signal<{ products: any[]; tags: string[] }>({ products: [], tags: [] });
+  loading = signal(false);
 
-  selectedItem = ''
-
-  private cache: { [query: string]: ProductSearchResult[] } = {};
-  loading = false
-  ngOnInit(): void {
-
-  }
-
-  search(event: Event) {
-    const target = event.target as HTMLInputElement;
-
-    this.searchQuery = target.value.trim(); // trim spaces
-
-    // Clear previous timeout
-    clearTimeout(this.searchTimeout);
-
-    // If input is empty, clear results and cancel subscription
-    if (!this.searchQuery) {
-      this.result.set([]); // update signal
-      this.searchSub?.unsubscribe()
-      return;
-    }
-
-    this.searchTimeout = setTimeout(() => {
-      this.callSearchApi(this.searchQuery)
-    }, 300); // 300ms debounce
-
-
-
-  }
-
-  private callSearchApi(query: string) {
-
-    //check the cache first
-    if (this.cache[query]) {
-      console.log("Using cache for:", query);
-      this.result.set(this.cache[query]);
-      return;
-    }
-    this.loading = true;
-    this.searchSub?.unsubscribe(); // cancel previous request
-    console.log("API Call", query);
-    this.searchSub = this.apiService.searchProducts(query, 1).subscribe(
-      {
-        next: (res: Product[]) => {
-          console.log(res);
-          this.loading = false;
-          const filtered = res
-           // .filter((p: Product) => p.name.toLowerCase().includes(query.toLowerCase()))
-            .map((p: Product) =>
-            ({
-              id: p.id,
-              name: p.name,
-              shortDescription: p.shortDescription
-
-            })
-            );
-
-          //store in cache
-          this.cache[query] = filtered;
-
-          this.result.set(filtered); // update signal
-          console.log(this.result());
-
+  constructor() {
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          if (!query?.trim()) return of({ products: [], tags: [] });
+          this.loading.set(true);
+          return this.api.searchProductsAndTags(query.trim());
+        })
+      )
+      .subscribe({
+        next: (res:any) => {
+          this.results.set(res);
+          this.loading.set(false);
         },
-        error: (err) => {
-          console.error('Error fetching products:', err);
-        }
-
-      }
-    );
-  }
-  showResults(show: boolean) {
-    this.showResult = show;
+        error: () => this.loading.set(false)
+      });
   }
 
-  selectItem(item: ProductSearchResult) {
-    this.selectedItem = item.name;
-    this.result.set([]);
-    this.searchQuery = item.name;
-    console.log("selected item", item);
+  selectTag(tag: string) {
+    this.router.navigate(['/products'], { queryParams: { tag } });
+  }
 
-    this.apiService.searchProducts(item.id.toString(), 1).subscribe({
-      next: () => {
-
-      }
-    })
-
+  selectProduct(id: number) {
+    this.router.navigate(['/product-details', id]);
   }
 }

@@ -23,18 +23,18 @@ export class ApiService {
 
   private API = `https://localhost:7156/api`;
 
-  searchProducts(q?: string, page: number = 1): Observable<Product[]> {
+  searchProductsAndTags(q?: string, page: number = 1): Observable<Product[]> {
     let params = new HttpParams().set('page', page);
 
     if (q && q.trim() !== '') {
       params = params.set('q', q.trim());
     }
-    return this.http.get<Product[]>(`${this.API}/Products`, { params });
+    return this.http.get<Product[]>(`${this.API}/Products/search`, { params });
   }
 
 
-  fetchProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${this.API}/Products?limit=500`)
+  fetchProducts(page:number=1, pageSize:number=5): Observable<Product[]> {
+    return this.http.get<Product[]>(`${this.API}/Products?page=${page}&pageSize=${pageSize}`)
   }
 
   addProduct(formData: FormData) {

@@ -7,6 +7,7 @@ import { Address } from '../../../models/users.model';
 import { CheckoutRequest } from '../../../models/order.model';
 import { CartItem } from '../../../models/cart.item.model';
 import { CartService } from '../../../services/cart.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-checkout',
@@ -20,8 +21,10 @@ export class CheckoutComponent implements OnInit {
   cartItems = this.cartService.cartItems;
   api = inject(ApiService);
   router = inject(Router);
+  upiId = signal('');
+  checkoutMessage = signal<string>('Place Order')
 
-
+  toast = inject(ToastService);
   addresses = signal<Address[]>([]);
   currPrimaryAddress = signal<Address | null>(null);
   paymentMethod = signal<string>('COD');
@@ -48,12 +51,38 @@ export class CheckoutComponent implements OnInit {
   }
 
 
-  placeOrder() {
+  checkPayment() {
     if (!this.currPrimaryAddress()) {
       alert('Please select a shipping address.');
       return;
     }
 
+    //UPI
+    if (this.paymentMethod() == 'UPI') {
+      if (!this.upiId()) {
+        this.toast.show('Please enter a valid UPI ID', 'error');
+        return;
+      }
+
+      this.toast.show(`UPI request sent to ${this.upiId()} for ₹${this.totalAmount().toFixed(2)}`, 'success');
+
+      setTimeout(() => {
+        // Simulate payment success after 3s
+        this.toast.show(' Payment successful!', 'success');
+        this.placeOrder(); // proceed to order
+      }, 3000);
+    }
+    //COD
+    else if (this.paymentMethod() == 'COD') {
+      this.placeOrder();
+    }
+
+
+
+
+  }
+
+  placeOrder() {
     const payload: CheckoutRequest = {
       shippingAddressId: this.currPrimaryAddress()?.id!,
       billingAddressId: this.currPrimaryAddress()?.id!, // same for now
@@ -66,7 +95,9 @@ export class CheckoutComponent implements OnInit {
       next: (res: any) => {
         this.successMessage.set(`Order placed successfully! Order #${res.orderNumber}`);
         this.loading.set(false);
-        setTimeout(() => this.router.navigate(['/orders', res.orderId]), 1500);
+        this.api.cartCount.update(() => 0);
+        //setTimeout(() => this.router.navigate(['/orders', res.orderId]), 1500);
+        setTimeout(() => this.router.navigate(['/orders']), 1500);
       },
       error: (err: any) => {
         console.error('Checkout failed', err);
@@ -76,10 +107,11 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
-
   selectAddress(addr: Address) {
     this.currPrimaryAddress.set(addr);
     this.changeAddress.set(false); //Hide the list again
+
+
   }
 
   subTotal = computed(() => this.cartService.subTotal());
@@ -92,4 +124,8 @@ export class CheckoutComponent implements OnInit {
     this.subTotal() + this.taxAmount() + this.shippingCharge()
   );
 
+  changePaymentMethod(method: string) {
+    this.paymentMethod.set(method);
+    this.checkoutMessage.set('Pay and Place Order')
+  }
 }

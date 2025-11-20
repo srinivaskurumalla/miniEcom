@@ -55,7 +55,7 @@ export class ProductsComponent implements OnInit {
 
   fetchProducts() {
     this.loading.set(true);
-    this.apiService.searchProducts(this.searchQuery, 1).subscribe({
+    this.apiService.fetchProducts(1, 10).subscribe({
       next: (res: Product[]) => {
         this.allProducts.set(res); // ✅ fixed
         console.log('Fetched products:', res);

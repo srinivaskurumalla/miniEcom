@@ -65,17 +65,28 @@
               type="radio"
               [value]="method"
               [checked]="paymentMethod() === method"
-              (change)="paymentMethod.set(method)"
+              (change)="changePaymentMethod(method)"
             />
             <span>{{ method }}</span>
           </label>
         </div>
       </div>
 
+      <div *ngIf="paymentMethod() == 'UPI'" class="mt-4 space-y-2">
+        <label for="" class="text-gray-700 font-medium">Enter UPI Id</label>
+        <input
+          type="text"
+          required
+          class="w-full border rounded-lg p-2"
+          placeholder="e.g., yourname@upi"
+          (input)="upiId.set($any($event.target).value)"
+        />
+      </div>
       <!-- Notes -->
       <div>
         <label class="text-gray-700 font-medium">Additional Notes</label>
         <textarea
+          (input)="notes.set($any($event.target).value)"
           (change)="notes()"
           rows="3"
           class="w-full mt-1 border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -88,9 +99,9 @@
         <button
           class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
           [disabled]="loading()"
-          (click)="placeOrder()"
+          (click)="checkPayment()"
         >
-          {{ loading() ? "Placing Order..." : "Place Order" }}
+          {{ loading() ? "Placing Order..." : checkoutMessage() }}
         </button>
       </div>
 

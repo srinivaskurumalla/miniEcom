@@ -1,52 +1,35 @@
-<div class="relative w-full max-w-xl mx-auto">
-  <!-- 🔍 Search Input -->
-  <div class="relative">
-    <input
-      [(ngModel)]="searchQuery"
-      type="text"
-      placeholder="Search products..."
-      (input)="search($event)"
-      (focus)="showResults(true)"
-      class="w-full border border-gray-300 rounded-full py-2.5 pl-5 pr-10 text-gray-700 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition outline-none"
-    />
+<div class="relative w-full max-w-md">
+  <input
+    type="text"
+    [formControl]="searchControl"
+    placeholder="Search products..."
+    class="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+  />
 
-    <!-- ❌ Clear Button -->
-    <button
-      *ngIf="searchQuery"
-      type="button"
-      (click)="searchQuery = ''; search($event)"
-      class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700"
-      aria-label="Clear"
-    >
-      ✕
-    </button>
-  </div>
+  <div *ngIf="loading()" class="p-2 text-sm text-gray-400">Loading...</div>
 
-  <!-- 🌀 Loading Indicator -->
-  <div *ngIf="loading" class="absolute left-0 right-0 bg-white shadow-lg rounded-lg mt-2 p-3 text-center text-gray-500">
-    Loading...
-  </div>
-
-  <!-- 🔽 Search Results Dropdown -->
-  <div
-    *ngIf="!loading && result().length > 0 && showResult"
-    class="absolute left-0 right-0 bg-white shadow-lg rounded-lg mt-2 max-h-80 overflow-y-auto border border-gray-100 z-50"
-  >
-    @for (res of result(); track $index) {
-    <div
-      (mousedown)="selectItem(res)"
-      class="px-4 py-2 text-gray-700 hover:bg-blue-50 cursor-pointer transition"
-    >
-      {{ res?.name }}
+  <div *ngIf="!loading() && (results().products.length || results().tags.length)"
+       class="absolute w-full bg-white border rounded-lg shadow-lg mt-1 z-50 p-2 space-y-2">
+    
+    <!-- 🔖 Tags -->
+    <div *ngIf="results().tags.length" class="border-b pb-2">
+      <p class="text-xs text-gray-500 uppercase mb-1">Tags</p>
+      <div *ngFor="let tag of results().tags"
+           (mousedown)="selectTag(tag)"
+           class="px-2 py-1 cursor-pointer hover:bg-gray-100 rounded">
+        🔖 {{ tag }}
+      </div>
     </div>
-    }
-  </div>
 
-  <!-- 🚫 No Results -->
-  <div
-    *ngIf="!loading && result().length === 0 && showResult && searchQuery && !selectedItem"
-    class="absolute left-0 right-0 bg-white shadow-lg rounded-lg mt-2 p-3 text-center text-gray-500"
-  >
-    No results found
+    <!-- 📦 Products -->
+    <div *ngIf="results().products.length">
+      <p class="text-xs text-gray-500 uppercase mb-1">Products</p>
+      <div *ngFor="let product of results().products"
+           (mousedown)="selectProduct(product.id)"
+           class="flex items-center gap-2 px-2 py-1 cursor-pointer hover:bg-gray-100 rounded">
+        <img [src]="product.imageUrl" alt="{{product.name}}" class="w-8 h-8 rounded object-cover" />
+        <span>{{ product.name }}</span>
+      </div>
+    </div>
   </div>
 </div>

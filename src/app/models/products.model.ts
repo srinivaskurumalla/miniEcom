@@ -12,6 +12,7 @@ export interface Product {
   stockQuantity: number;
   shortDescription: string;
   images: ProductImage[];
+  tags:string[]
 }
 export interface ProductDetails {
   id: number;
