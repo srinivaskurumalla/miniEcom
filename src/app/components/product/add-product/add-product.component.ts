@@ -1,9 +1,10 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../../services/api.service';
 import { Categories } from '../../../models/products.model';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-add-product',
   standalone: true,
@@ -21,6 +22,8 @@ export class AddProductComponent implements OnInit {
   api = inject(ApiService);
   selectedImages: string[] = [];
   categories: Categories[] = [];
+  route = inject(ActivatedRoute)
+  isEditMode = signal<boolean>(false);
 
   ngOnInit(): void {
     //Load Categories from API
@@ -28,6 +31,8 @@ export class AddProductComponent implements OnInit {
 
     // Auto-generate SKU when relevant fields change
     this.setupSkuGenerator();
+
+   
   }
 
   productForm = this.fb.group({
@@ -128,4 +133,9 @@ export class AddProductComponent implements OnInit {
       }
     });
   }
+
+ 
+
+ 
+
 }

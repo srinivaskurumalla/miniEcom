@@ -11,8 +11,9 @@ export interface Product {
   price: number;
   stockQuantity: number;
   shortDescription: string;
+  isActive:boolean;
   images: ProductImage[];
-  tags:string[]
+  tags:string
 }
 export interface ProductDetails {
   id: number;

@@ -3,7 +3,7 @@ import { Product } from '../../../models/products.model';
 import { ApiService } from '../../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { SearchAutoCompleteComponent } from "../search-auto-complete/search-auto-complete.component";
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastService } from '../../../services/toast.service';
 
 @Component({
@@ -26,6 +26,7 @@ export class ProductsComponent implements OnInit {
 
   apiService = inject(ApiService);
   router = inject(Router);
+  route = inject(ActivatedRoute);
   //snack = inject(MatSnackBar)
   loading = signal(false);
   toast = inject(ToastService)
@@ -50,10 +51,17 @@ export class ProductsComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.fetchProducts();
+    this.route.queryParamMap.subscribe(params => {
+      const tag = params.get('tag');
+      if (tag) {
+        this.fetchProductsByTag(tag);
+      } else {
+        this.fetchAllProducts();
+      }
+    })
   }
 
-  fetchProducts() {
+  fetchAllProducts() {
     this.loading.set(true);
     this.apiService.fetchProducts(1, 10).subscribe({
       next: (res: Product[]) => {
@@ -69,6 +77,16 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  fetchProductsByTag(tag: string) {
+    this.loading.set(true);
+    this.apiService.getProductsByTag(tag).subscribe({
+      next: (res: Product[]) => {
+        this.allProducts.set(res);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false)
+    });
+  }
   previousPage() {
     if (this.currentPage() > 0) {
       this.currentPage.set(this.currentPage() - 1);

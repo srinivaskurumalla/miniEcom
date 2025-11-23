@@ -12,6 +12,7 @@ import { Order } from '../models/order.model';
 })
 export class ApiService {
 
+
   // Global signals
   userName = signal<string | null>(null);
   cartCount = signal<number>(0);
@@ -33,12 +34,25 @@ export class ApiService {
   }
 
 
-  fetchProducts(page:number=1, pageSize:number=5): Observable<Product[]> {
+  fetchProducts(page: number = 1, pageSize: number = 5): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.API}/Products?page=${page}&pageSize=${pageSize}`)
   }
 
+  getProductsByTag(tag: string) {
+  return this.http.get<Product[]>(`${this.API}/products/tag/${tag}`);
+}
+
+
   addProduct(formData: FormData) {
     return this.http.post(`${this.API}/Products`, formData);
+  }
+
+  updateProduct(id:number, formData: FormData) {
+    return this.http.put(`${this.API}/products/${id}`, formData);
+  }
+
+  getProductById(id: number) {
+    return this.http.get(`${this.API}/products/${id}`);
   }
 
   register(user: Register) {
@@ -114,9 +128,12 @@ export class ApiService {
   }
 
   getOrders() {
-  return this.http.get<Order[]>(`${this.API}/orders/my-orders`);
-}
+    return this.http.get<Order[]>(`${this.API}/orders/my-orders`);
+  }
 
+  getOrderDetails(id: number) {
+    return this.http.get<any>(`${this.API}/orders/${id}`);
+  }
   logout() {
     localStorage.clear();
     sessionStorage.clear();

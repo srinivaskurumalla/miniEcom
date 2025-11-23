@@ -1,0 +1,67 @@
+<div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+  <div class="bg-white w-[600px] p-6 rounded-xl shadow-lg relative">
+    <button
+      class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+      (click)="close.emit(false)"
+    >
+      ✖
+    </button>
+
+    <h2 class="text-xl font-semibold mb-4 text-gray-800">Edit Product</h2>
+
+    <form [formGroup]="form" (ngSubmit)="saveChanges()" class="space-y-4">
+      <div>
+        <label>Name</label>
+        <input formControlName="name" class="w-full border p-2 rounded" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label>Price</label>
+          <input type="number" formControlName="price" class="w-full border p-2 rounded" />
+        </div>
+        <div>
+          <label>Stock</label>
+          <input type="number" formControlName="stockQuantity" class="w-full border p-2 rounded" />
+        </div>
+      </div>
+
+      <div>
+        <label>Short Description</label>
+        <textarea formControlName="shortDescription" rows="2" class="w-full border p-2 rounded"></textarea>
+      </div>
+
+      <div>
+        <label>Tags (comma separated)</label>
+        <input formControlName="tags" class="w-full border p-2 rounded" />
+      </div>
+
+      <div>
+        <label>Replace Images</label>
+        <input type="file" (change)="onFileChange($event)" multiple class="mt-1" />
+      </div>
+
+      <div class="flex flex-wrap gap-2 mt-2">
+        <div *ngFor="let img of previewImages" class="relative">
+          <img [src]="img" class="w-20 h-20 object-cover rounded border" />
+          <button
+            (click)="removeImage(img)"
+            type="button"
+            class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-3 mt-4">
+        <button type="button" (click)="close.emit(false)" class="px-4 py-2 border rounded">
+          Cancel
+        </button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -96,8 +96,7 @@ export class CheckoutComponent implements OnInit {
         this.successMessage.set(`Order placed successfully! Order #${res.orderNumber}`);
         this.loading.set(false);
         this.api.cartCount.update(() => 0);
-        //setTimeout(() => this.router.navigate(['/orders', res.orderId]), 1500);
-        setTimeout(() => this.router.navigate(['/orders']), 1500);
+        setTimeout(() => this.router.navigate(['/order', res.orderId]), 1500);
       },
       error: (err: any) => {
         console.error('Checkout failed', err);

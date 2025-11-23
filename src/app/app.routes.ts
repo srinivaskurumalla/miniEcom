@@ -9,12 +9,15 @@ import { AddressesComponent } from './components/User/addresses/addresses.compon
 import { ProfileComponent } from './components/User/profile/profile.component';
 import { CheckoutComponent } from './components/orders/checkout/checkout.component';
 import { OrderHistoryComponent } from './components/orders/order-history/order-history.component';
+import { OrderDetailsComponent } from './components/orders/order-details/order-details.component';
+import { ProductsListComponent } from './components/Admin-Panel/Products/product-list/product-list.component';
 
 export const routes: Routes = [
     { path: '', component: ProductsComponent },
 
     { path: 'products', component: ProductsComponent },
     { path: 'add-product', component: AddProductComponent },
+    { path: 'product-list', component: ProductsListComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent },
     { path: 'product-details/:id', component: ProductDetailsComponent },
@@ -23,4 +26,5 @@ export const routes: Routes = [
     { path: 'profile', component: ProfileComponent },
     { path: 'checkout', component: CheckoutComponent },
     { path: 'my-orders', component: OrderHistoryComponent },
+    { path: 'order/:id', component: OrderDetailsComponent },
 ];
